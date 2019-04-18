@@ -1,0 +1,59 @@
+---
+- name: Create metricbeat Path
+  file:
+    path: "{{ metricbeat_install_dir }}"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    state: directory
+    mode: "u=rwx,g=rx,o=x"
+
+- name: Create metricbeat Version Path
+  file:
+    path: "{{ metricbeat_install_dir }}/{{ metricbeat_version }}"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    state: directory
+    mode: "u=rwx,g=rx,o=x"
+
+- name: Create metricbeat log Path
+  file:
+    path: "{{ metricbeat_log_dir }}"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    state: directory
+    mode: "u=rwx,g=rx,o=x"
+
+- name: "copy {{ metricbeat_install_tar }} to {{ metricbeat_install_dir }}"
+  copy:
+    src: "files/{{ metricbeat_install_tar }}"
+    dest: "{{ metricbeat_install_dir }}"
+
+- name: "Extract {{ metricbeat_install_tar }} into {{ metricbeat_install_dir }}/{{ metricbeat_version }}"
+  unarchive:
+    remote_src: yes
+    src: "{{ metricbeat_install_dir }}/{{ metricbeat_install_tar }}"
+    dest: "{{ metricbeat_install_dir }}/{{ metricbeat_version }}"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    extra_opts: [--strip-components=1]
+
+- name: Copy metricbeat service file
+  template:
+    src: metricbeat.ini.j2
+    dest: "{{ supervisord_ini_dir }}/metricbeat.ini"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    mode: "u=rw,g=r,o=r"
+  notify:
+    - update supervisord
+    - restart metricbeat
+
+- name: Copy metricbeat config file
+  template:
+    src: metricbeat.yml.j2
+    dest: "{{ metricbeat_install_dir }}/{{ metricbeat_version }}/metricbeat.yml"
+    owner: "{{ metricbeat_user }}"
+    group: "{{ metricbeat_group }}"
+    mode: "u=rw,g=r,o=r"
+  notify:
+    - restart metricbeat

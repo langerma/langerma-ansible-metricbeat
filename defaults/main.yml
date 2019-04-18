@@ -1,0 +1,8 @@
+---
+metricbeat_user: "metricbeat"
+metricbeat_group: "metricbeat"
+metricbeat_install_tar: "metricbeat-7.0.0-linux-x86_64.tar.gz"
+metricbeat_install_dir: "/app/metricbeat"
+metricbeat_version: "7.0.0"
+metricbeat_log_dir: "{{ metricbeat_install_dir }}/{{ metricbeat_version }}/logs"
+supervisord_ini_dir: "/app/supervisord"

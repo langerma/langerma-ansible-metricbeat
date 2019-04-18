@@ -1,0 +1,7 @@
+[program:metricbeat]
+user={{ metricbeat_user }}
+command={{ metricbeat_install_dir }}/{{ metricbeat_version }}/metricbeat -c {{ metricbeat_install_dir }}/{{ metricbeat_version}}/metricbeat.yml
+autostart=true
+autorestart=true
+stdout_logfile={{ metricbeat_log_dir }}/metricbeat.out.log
+stderr_logfile={{ metricbeat_log_dir }}/metricbeat.err.log
